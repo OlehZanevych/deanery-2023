@@ -3,7 +3,9 @@ package org.lnu.teaching.web.application.disign.deanery.service.faculty.impl;
 import lombok.AllArgsConstructor;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.BaseFacultyDto;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.FacultyDto;
+import org.lnu.teaching.web.application.disign.deanery.dto.faculty.FacultyPatch;
 import org.lnu.teaching.web.application.disign.deanery.entity.FacultyEntity;
+import org.lnu.teaching.web.application.disign.deanery.exception.BadRequestException;
 import org.lnu.teaching.web.application.disign.deanery.mapper.FacultyMapper;
 import org.lnu.teaching.web.application.disign.deanery.repository.faculty.FacultyRepository;
 import org.lnu.teaching.web.application.disign.deanery.service.faculty.FacultyService;
@@ -44,6 +46,15 @@ public class FacultyServiceImpl implements FacultyService {
         facultyEntity.setId(id);
 
         facultyRepository.update(facultyEntity);
+    }
+
+    @Override
+    public void patch(Long id, FacultyPatch facultyPatch) {
+        if (facultyPatch.isEmpty()) {
+            throw new BadRequestException("Faculty patch is empty!");
+        }
+
+        facultyRepository.patch(id, facultyPatch);
     }
 
     @Override

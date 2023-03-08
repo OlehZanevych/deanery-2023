@@ -1,6 +1,7 @@
 package org.lnu.teaching.web.application.disign.deanery.repository.faculty.impl;
 
 import lombok.AllArgsConstructor;
+import org.lnu.teaching.web.application.disign.deanery.dto.faculty.FacultyPatch;
 import org.lnu.teaching.web.application.disign.deanery.entity.FacultyEntity;
 import org.lnu.teaching.web.application.disign.deanery.exception.NotFoundException;
 import org.lnu.teaching.web.application.disign.deanery.repository.faculty.FacultyRepository;
@@ -13,6 +14,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -73,6 +75,12 @@ public class FacultyRepositoryImpl implements FacultyRepository {
             WHERE id = :id
             """;
 
+    private static final String PATCH_FACULTY_BY_ID_QUERY_TEMPLATE = """
+            UPDATE faculties SET
+                %s
+            WHERE id = :id
+            """;
+
     private static final String DELETE_FACULTY_BY_ID_QUERY = """
             DELETE FROM faculties WHERE id = :id
             """;
@@ -85,6 +93,7 @@ public class FacultyRepositoryImpl implements FacultyRepository {
         entity.setId(rs.getObject("id", Long.class));
         entity.setName(rs.getString("name"));
         entity.setWebsite(rs.getString("website"));
+        entity.setEmail(rs.getString("email"));
         entity.setPhone(rs.getString("phone"));
         entity.setAddress(rs.getString("address"));
         entity.setInfo(rs.getString("info"));
@@ -142,6 +151,52 @@ public class FacultyRepositoryImpl implements FacultyRepository {
             throw new NotFoundException("Faculty with id " + faculty.getId() + " not found!");
         }
     }
+
+    @Override
+    public void patch(Long id, FacultyPatch facultyPatch) {
+        List<String> assignments = new ArrayList<>();
+        MapSqlParameterSource parameters = new MapSqlParameterSource("id", id);
+
+        if (facultyPatch.isNameUpdated()) {
+            assignments.add("name = :name");
+            parameters.addValue("name", facultyPatch.getName());
+        }
+
+        if (facultyPatch.isWebsiteUpdated()) {
+            assignments.add("website = :website");
+            parameters.addValue("website", facultyPatch.getWebsite());
+        }
+
+        if (facultyPatch.isEmailUpdated()) {
+            assignments.add("email = :email");
+            parameters.addValue("email", facultyPatch.getEmail());
+        }
+
+        if (facultyPatch.isPhoneUpdated()) {
+            assignments.add("phone = :phone");
+            parameters.addValue("phone", facultyPatch.getPhone());
+        }
+
+        if (facultyPatch.isAddressUpdated()) {
+            assignments.add("address = :address");
+            parameters.addValue("address", facultyPatch.getAddress());
+        }
+
+        if (facultyPatch.isInfoUpdated()) {
+            assignments.add("info = :info");
+            parameters.addValue("info", facultyPatch.getInfo());
+        }
+
+        String assignmentStr = String.join(", ", assignments);
+        String query = String.format(PATCH_FACULTY_BY_ID_QUERY_TEMPLATE, assignmentStr);
+
+        int affectedRows = jdbcTemplate.update(query, parameters);
+
+        if (affectedRows == 0) {
+            throw new NotFoundException("Faculty with id " + id + " not found!");
+        }
+    }
+
 
     @Override
     public void delete(Long id) {
