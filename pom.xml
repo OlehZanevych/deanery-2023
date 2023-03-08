@@ -20,6 +20,7 @@
 		<mapstruct.version>1.5.3.Final</mapstruct.version>
 		<postgresql.version>42.5.4</postgresql.version>
 		<springdoc.openapi.version>2.0.2</springdoc.openapi.version>
+		<net.ttddyy.datasource-proxy.version>1.8.1</net.ttddyy.datasource-proxy.version>
 
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 	</properties>
@@ -51,6 +52,12 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>${postgresql.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.ttddyy</groupId>
+			<artifactId>datasource-proxy</artifactId>
+			<version>${net.ttddyy.datasource-proxy.version}</version>
 		</dependency>
 
 		<dependency>

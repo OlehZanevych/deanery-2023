@@ -3,10 +3,12 @@ package org.lnu.teaching.web.application.disign.deanery.controller.faculty;
 import lombok.AllArgsConstructor;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.BaseFacultyDto;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.FacultyDto;
+import org.lnu.teaching.web.application.disign.deanery.dto.faculty.FacultyPatch;
 import org.lnu.teaching.web.application.disign.deanery.service.faculty.FacultyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -44,6 +46,12 @@ public class FacultyController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable Long id, @RequestBody BaseFacultyDto faculty) {
         facultyService.update(id, faculty);
+    }
+
+    @PatchMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void patch(@PathVariable Long id, @RequestBody FacultyPatch facultyPatch) {
+        facultyService.patch(id, facultyPatch);
     }
 
     @DeleteMapping({"{id}"})
