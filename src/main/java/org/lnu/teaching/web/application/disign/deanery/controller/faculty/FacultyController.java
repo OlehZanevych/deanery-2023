@@ -1,9 +1,11 @@
 package org.lnu.teaching.web.application.disign.deanery.controller.faculty;
 
 import lombok.AllArgsConstructor;
+import org.lnu.teaching.web.application.disign.deanery.dto.common.ValueDto;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.BaseFacultyDto;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.FacultyDto;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.FacultyPatch;
+import org.lnu.teaching.web.application.disign.deanery.dto.faculty.query.params.FacultyFitterOptions;
 import org.lnu.teaching.web.application.disign.deanery.service.faculty.FacultyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,13 +35,18 @@ public class FacultyController {
     }
 
     @GetMapping
-    public List<FacultyDto> findAll() {
-        return facultyService.findAll();
+    public List<FacultyDto> findAll(FacultyFitterOptions fitterOptions, Integer limit, Integer offset) {
+        return facultyService.findAll(fitterOptions, limit, offset);
     }
 
     @GetMapping("{id}")
     public FacultyDto find(@PathVariable Long id) {
         return facultyService.find(id);
+    }
+
+    @GetMapping("count")
+    public ValueDto<Integer> count(FacultyFitterOptions params) {
+        return facultyService.count(params);
     }
 
     @PutMapping("{id}")
