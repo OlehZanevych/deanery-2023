@@ -3,7 +3,7 @@ package org.lnu.teaching.web.application.disign.deanery.repository.faculty.impl;
 import lombok.AllArgsConstructor;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.FacultyPatch;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.query.params.FacultyFitterOptions;
-import org.lnu.teaching.web.application.disign.deanery.entity.FacultyEntity;
+import org.lnu.teaching.web.application.disign.deanery.entity.faculty.FacultyEntity;
 import org.lnu.teaching.web.application.disign.deanery.exception.NotFoundException;
 import org.lnu.teaching.web.application.disign.deanery.repository.faculty.FacultyRepository;
 import org.springframework.dao.EmptyResultDataAccessException;

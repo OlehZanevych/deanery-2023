@@ -1,4 +1,4 @@
-package org.lnu.teaching.web.application.disign.deanery.entity;
+package org.lnu.teaching.web.application.disign.deanery.entity.faculty;
 
 import lombok.Data;
 
