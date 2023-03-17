@@ -2,13 +2,17 @@ package org.lnu.teaching.web.application.disign.deanery.repository.department.im
 
 import lombok.AllArgsConstructor;
 import org.lnu.teaching.web.application.disign.deanery.entity.department.DepartmentEntity;
+import org.lnu.teaching.web.application.disign.deanery.entity.faculty.FacultyEntity;
 import org.lnu.teaching.web.application.disign.deanery.repository.department.DepartmentRepository;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @AllArgsConstructor
@@ -29,6 +33,30 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
             )
             """;
 
+    private static final String SELECT_DEPARTMENT_ITEMS_QUERY = """
+            SELECT
+                d.id,
+                d.name,
+                faculty_id,
+                f.name faculty_name
+            FROM departments d
+            JOIN faculties f ON (f.id = d.faculty_id)
+            """;
+
+    private static final RowMapper<DepartmentEntity> DEPARTMENT_ITEM_ROW_MAPPER = (rs, rowNum) -> {
+        DepartmentEntity entity = new DepartmentEntity();
+
+        entity.setId(rs.getObject("id", Long.class));
+        entity.setName(rs.getString("name"));
+
+        FacultyEntity facultyEntity = new FacultyEntity();
+        facultyEntity.setId(rs.getObject("faculty_id", Long.class));
+        facultyEntity.setName(rs.getString("faculty_name"));
+        entity.setFaculty(facultyEntity);
+
+        return entity;
+    };
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
@@ -48,5 +76,10 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
         department.setId(id);
 
         return department;
+    }
+
+    @Override
+    public List<DepartmentEntity> findAll() {
+        return jdbcTemplate.query(SELECT_DEPARTMENT_ITEMS_QUERY, DEPARTMENT_ITEM_ROW_MAPPER);
     }
 }
