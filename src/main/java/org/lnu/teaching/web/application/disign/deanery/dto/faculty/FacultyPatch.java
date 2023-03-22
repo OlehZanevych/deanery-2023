@@ -22,23 +22,18 @@ public class FacultyPatch {
     @Setter(AccessLevel.NONE)
     private boolean isNameUpdated;
 
-    @JsonIgnore
     @Setter(AccessLevel.NONE)
     private boolean isWebsiteUpdated;
 
-    @JsonIgnore
     @Setter(AccessLevel.NONE)
     private boolean isEmailUpdated;
 
-    @JsonIgnore
     @Setter(AccessLevel.NONE)
     private boolean isPhoneUpdated;
 
-    @JsonIgnore
     @Setter(AccessLevel.NONE)
     private boolean isAddressUpdated;
 
-    @JsonIgnore
     @Setter(AccessLevel.NONE)
     private boolean isInfoUpdated;
 
@@ -82,5 +77,35 @@ public class FacultyPatch {
         isInfoUpdated = true;
 
         this.info = info;
+    }
+
+    @JsonIgnore
+    public boolean isNameUpdated() {
+        return isNameUpdated;
+    }
+
+    @JsonIgnore
+    public boolean isWebsiteUpdated() {
+        return isWebsiteUpdated;
+    }
+
+    @JsonIgnore
+    public boolean isEmailUpdated() {
+        return isEmailUpdated;
+    }
+
+    @JsonIgnore
+    public boolean isPhoneUpdated() {
+        return isPhoneUpdated;
+    }
+
+    @JsonIgnore
+    public boolean isAddressUpdated() {
+        return isAddressUpdated;
+    }
+
+    @JsonIgnore
+    public boolean isInfoUpdated() {
+        return isInfoUpdated;
     }
 }
