@@ -271,16 +271,18 @@ public class FacultyRepositoryImpl implements FacultyRepository {
     private void appendConditions(StringBuilder queryBuilder, MapSqlParameterSource parameters, FacultyFitterOptions params) {
         List<String> conditions = new ArrayList<>();
 
-        String nameParam = params.getName();
-        if (nameParam != null) {
-            conditions.add("name LIKE(:name)");
-            parameters.addValue("name", "%" + nameParam + "%");
-        }
+        if (params != null) {
+            String nameParam = params.getName();
+            if (nameParam != null) {
+                conditions.add("name LIKE(:name)");
+                parameters.addValue("name", "%" + nameParam + "%");
+            }
 
-        String infoParam = params.getInfo();
-        if (infoParam != null) {
-            conditions.add("info LIKE(:info)");
-            parameters.addValue("info", "%" + infoParam+ "%");
+            String infoParam = params.getInfo();
+            if (infoParam != null) {
+                conditions.add("info LIKE(:info)");
+                parameters.addValue("info", "%" + infoParam+ "%");
+            }
         }
 
         if (!conditions.isEmpty()) {
