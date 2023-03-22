@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.FacultyPatch;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.query.params.FacultyFitterOptions;
 import org.lnu.teaching.web.application.disign.deanery.entity.faculty.FacultyEntity;
+import org.lnu.teaching.web.application.disign.deanery.exception.DataConflictException;
 import org.lnu.teaching.web.application.disign.deanery.exception.NotFoundException;
 import org.lnu.teaching.web.application.disign.deanery.repository.faculty.FacultyRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -117,7 +119,15 @@ public class FacultyRepositoryImpl implements FacultyRepository {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        jdbcTemplate.update(INSERT_FACULTY_QUERY, sqlParameters, keyHolder);
+        try {
+            jdbcTemplate.update(INSERT_FACULTY_QUERY, sqlParameters, keyHolder);
+        } catch (DuplicateKeyException e) {
+            if (e.getCause().getMessage().contains("duplicate key value violates unique constraint \"faculties_name_key\"")) {
+                throw new DataConflictException(String.format("Faculty with name \"%s\" already exists!", faculty.getName()));
+            }
+
+            throw e;
+        }
 
         Long id = (Long) keyHolder.getKeys().get("id");
         faculty.setId(id);
@@ -170,14 +180,23 @@ public class FacultyRepositoryImpl implements FacultyRepository {
 
     @Override
     public void update(FacultyEntity faculty) {
-        int affectedRows = jdbcTemplate.update(UPDATE_FACULTY_BY_ID_QUERY, new MapSqlParameterSource()
-                .addValue("id", faculty.getId())
-                .addValue("name", faculty.getName())
-                .addValue("website", faculty.getWebsite())
-                .addValue("email", faculty.getEmail())
-                .addValue("phone", faculty.getPhone())
-                .addValue("address", faculty.getAddress())
-                .addValue("info", faculty.getInfo()));
+        int affectedRows;
+        try {
+            affectedRows = jdbcTemplate.update(UPDATE_FACULTY_BY_ID_QUERY, new MapSqlParameterSource()
+                    .addValue("id", faculty.getId())
+                    .addValue("name", faculty.getName())
+                    .addValue("website", faculty.getWebsite())
+                    .addValue("email", faculty.getEmail())
+                    .addValue("phone", faculty.getPhone())
+                    .addValue("address", faculty.getAddress())
+                    .addValue("info", faculty.getInfo()));
+        } catch (DuplicateKeyException e) {
+            if (e.getCause().getMessage().contains("duplicate key value violates unique constraint \"faculties_name_key\"")) {
+                throw new DataConflictException(String.format("Faculty with name \"%s\" already exists!", faculty.getName()));
+            }
+
+            throw e;
+        }
 
         if (affectedRows == 0) {
             throw new NotFoundException("Faculty with id " + faculty.getId() + " not found!");
@@ -222,7 +241,17 @@ public class FacultyRepositoryImpl implements FacultyRepository {
         String assignmentStr = String.join(", ", assignments);
         String query = String.format(PATCH_FACULTY_BY_ID_QUERY_TEMPLATE, assignmentStr);
 
-        int affectedRows = jdbcTemplate.update(query, parameters);
+        int affectedRows;
+
+        try {
+            affectedRows = jdbcTemplate.update(query, parameters);
+        } catch (DuplicateKeyException e) {
+            if (e.getCause().getMessage().contains("duplicate key value violates unique constraint \"faculties_name_key\"")) {
+                throw new DataConflictException(String.format("Faculty with name \"%s\" already exists!", facultyPatch.getName()));
+            }
+
+            throw e;
+        }
 
         if (affectedRows == 0) {
             throw new NotFoundException("Faculty with id " + id + " not found!");
