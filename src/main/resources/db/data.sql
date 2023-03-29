@@ -50,3 +50,7 @@ VALUES (1, 'Програмування', 13, 'programming.dep.ami@lnu.edu.ua', '
        (7, 'Математичного моделювання соціально-економічних процесів', 13, 'kafmmsep@lnu.edu.ua', '(032) 239-43-51',
         'Тестова інформація про кафедру');
 SELECT setval('departments_id_seq', 7);
+
+INSERT INTO users (username, password_hash, is_admin, first_name, middle_name, last_name, phone, email, info)
+VALUES ('andriy100', '$2a$10$FIpjQDlCogT7evqJX7z.KOGVwnQTD1v4YK7G255OhlOdgMvjHjKYy', true, 'Andriy', 'Ivanovych', 'Burban', '+380673842378', 'Andriy.Burban@test', 'Fanny gay:)');
+SELECT setval('users_id_seq', 1);

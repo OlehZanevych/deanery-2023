@@ -3,6 +3,7 @@ package org.lnu.teaching.web.application.disign.deanery.controller.faculty;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
+import org.lnu.teaching.web.application.disign.deanery.annotation.Auth;
 import org.lnu.teaching.web.application.disign.deanery.dto.common.ValueDto;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.BaseFacultyDto;
 import org.lnu.teaching.web.application.disign.deanery.dto.faculty.FacultyDto;
@@ -31,6 +32,7 @@ public class FacultyController {
 
     private final FacultyService facultyService;
 
+    @Auth(isAdmin = true)
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public FacultyDto create(@RequestBody BaseFacultyDto faculty) {
