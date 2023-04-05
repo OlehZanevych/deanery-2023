@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.authTokenLifetime = 1000 * authTokenLifetime;
-        this.jwtSigningKey = jwtSigningKey;
+        this.jwtSigningKey = Base64.getEncoder().encodeToString(jwtSigningKey.getBytes());
     }
 
     record UserData(String username, boolean isAdmin) {
@@ -74,11 +74,9 @@ public class AuthServiceImpl implements AuthService {
 
         String jwtToken = authHeaderParts[1];
 
-        String jwtSigningKeyBase64 = Base64.getEncoder().encodeToString(jwtSigningKey.getBytes());
-
         Map<String, Object> userData;
         try {
-            Claims claims = Jwts.parser().setSigningKey(jwtSigningKeyBase64).parseClaimsJws(jwtToken).getBody();
+            Claims claims = Jwts.parser().setSigningKey(jwtSigningKey).parseClaimsJws(jwtToken).getBody();
             userData = claims.get(USER_DATA_CLAIMS, Map.class);
         } catch (RuntimeException e) {
             throw new UnauthenticatedException("Invalid JWT token!");
@@ -115,14 +113,12 @@ public class AuthServiceImpl implements AuthService {
         long creationTime = System.currentTimeMillis();
         long expirationTime = creationTime + authTokenLifetime;
 
-        String jwtSigningKeyBase64 = Base64.getEncoder().encodeToString(jwtSigningKey.getBytes());
-
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuer(AUTH_ISSUER)
                 .setIssuedAt(new Date(creationTime))
                 .setExpiration(new Date(expirationTime))
-                .signWith(SignatureAlgorithm.HS256, jwtSigningKeyBase64)
+                .signWith(SignatureAlgorithm.HS256, jwtSigningKey)
                 .compact();
     }
 }

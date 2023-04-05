@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Auth
 @RestController
 @AllArgsConstructor
 @RequestMapping("faculties")
