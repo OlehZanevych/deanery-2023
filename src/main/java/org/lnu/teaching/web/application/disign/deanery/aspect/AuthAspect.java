@@ -1,4 +1,4 @@
-package org.lnu.teaching.web.application.disign.deanery.config.aspect;
+package org.lnu.teaching.web.application.disign.deanery.aspect;
 
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,7 +19,10 @@ public class AuthAspect {
         authService.verifyAuthority(auth);
     }
 
-    public void verifyAuthoritySpecifiedForControllerClass() {
 
+    @Before("@within(auth) && !@annotation(org.lnu.teaching.web.application.disign.deanery.annotation.Auth)" +
+            "&& within(@org.springframework.web.bind.annotation.RestController *)")
+    public void verifyAuthoritySpecifiedForControllerClass(Auth auth) {
+        authService.verifyAuthority(auth);
     }
 }
