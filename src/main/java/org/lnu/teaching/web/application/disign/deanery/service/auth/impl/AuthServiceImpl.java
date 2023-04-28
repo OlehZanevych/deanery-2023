@@ -28,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private static final String AUTH_ISSUER = "Auto Service Auth";
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String IS_ADMIN_PROPERTY = "isAdmin";
+    private static final String USERNAME_PROPERTY = "username";
 
     private final HttpServletRequest httpServletRequest;
     private final HttpServletResponse httpServletResponse;
@@ -78,6 +79,8 @@ public class AuthServiceImpl implements AuthService {
         try {
             Claims claims = Jwts.parser().setSigningKey(jwtSigningKey).parseClaimsJws(jwtToken).getBody();
             userData = claims.get(USER_DATA_CLAIMS, Map.class);
+
+            refreshToken(new UserData((String) userData.get(USERNAME_PROPERTY) ,(Boolean) userData.get(IS_ADMIN_PROPERTY)));
         } catch (RuntimeException e) {
             throw new UnauthenticatedException("Invalid JWT token!");
         }
@@ -107,6 +110,10 @@ public class AuthServiceImpl implements AuthService {
 
         UserData userData = new UserData(username, userAuthData.getIsAdmin());
 
+        return generateToken(userData);
+    }
+
+    private String generateToken(UserData userData) {
         Claims claims = Jwts.claims();
         claims.put(USER_DATA_CLAIMS, userData);
 
@@ -120,5 +127,10 @@ public class AuthServiceImpl implements AuthService {
                 .setExpiration(new Date(expirationTime))
                 .signWith(SignatureAlgorithm.HS256, jwtSigningKey)
                 .compact();
+    }
+
+    private void refreshToken(UserData userData) {
+        String refreshedToken = generateToken(userData);
+        httpServletResponse.setHeader(AUTH_TOKEN_HEADER, refreshedToken);
     }
 }
